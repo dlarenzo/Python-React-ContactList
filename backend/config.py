@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-# INITILIZE FLASK APP
+# INITIALIZE FLASK APP
 app = Flask(__name__)
 
 # WRAP THE APP WITH CORS
