@@ -17,9 +17,12 @@ def get_contacts():
 # CREATE (POST) METHOD
 @app.route("/create_contact", methods=["POST"])
 def create_contact():
+  # Log the incoming request data
+  print("Request JSON:", request.json)
+    
   # GET DATA FROM REQUEST
-  first_name = request.json["first_name"]
-  last_name = request.json["last_name"]
+  first_name = request.json["firstName"]
+  last_name = request.json["lastName"]
   email = request.json["email"]
   
   #  CHECK IF DATA EXISTS IF NOT ERROR MESSAGE
@@ -37,7 +40,7 @@ def create_contact():
   except Exception as e:
     return jsonify({"message": str(e)}), 400
   
-  return jsonify({"message": "Contact created successfully!"}), 201
+  return jsonify({"message": "Contact created successfully!", "contact": new_contact.to_json()}), 201
 
 # UPDATE METHOD
 @app.route("/update_contact/<int:user_id>", methods=["PATCH"])
@@ -46,8 +49,10 @@ def update_contact(user_id):
   
   if not contact:
     return jsonify({"message": "Contact not found!"}), 404
+  
   # DATA FOUND REQUEST
   data = request.json
+  
   # UPDATE ANY OF THE INFORMATION THAT MAY HAVE CHANGED IN DATA BELOW
   contact.first_name = data.get("first_name", contact.first_name)
   contact.last_name = data.get("last_name", contact.last_name)
