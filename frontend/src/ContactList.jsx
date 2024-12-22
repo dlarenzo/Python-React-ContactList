@@ -1,7 +1,28 @@
 import PropTypes from "prop-types";
 import "./App.css";
 
-const ContactList = ({ contacts }) => {
+const ContactList = ({ contacts, updateContact, updateCallback }) => {
+  // DELETE FUNCTION
+  const onDelete = async (id) => {
+    try {
+      const options = {
+        method: "DELETE",
+      };
+      const response = await fetch(
+        `http://127.0.0.1:5000/delete_contact/${id}`,
+        options
+      );
+      // chekc status
+      if (response.status === 200) {
+        updateCallback();
+      } else {
+        console.error("Failed to delete contact");
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+
   return (
     <div>
       <h2>Contacts</h2>
@@ -28,8 +49,8 @@ const ContactList = ({ contacts }) => {
               <td>{contact.lastName}</td>
               <td>{contact.email}</td>
               <td>
-                <button>Edit</button>
-                <button>Delete</button>
+                <button onClick={() => updateContact(contact)}>Edit</button>
+                <button onClick={() => onDelete(contact.id)}>Delete</button>
               </td>
             </tr>
           ))}
@@ -43,9 +64,13 @@ ContactList.propTypes = {
   contacts: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
+      firstName: PropTypes.string.isRequired,
+      lastName: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
     })
   ).isRequired,
+  updateContact: PropTypes.func.isRequired,
+  updateCallback: PropTypes.func.isRequired,
 };
 
 export default ContactList;

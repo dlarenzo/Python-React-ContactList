@@ -51,16 +51,28 @@ def update_contact(user_id):
     return jsonify({"message": "Contact not found!"}), 404
   
   # DATA FOUND REQUEST
-  data = request.json
+  # data = request.json
+  first_name = request.json.get("firstName")
+  last_name = request.json.get("lastName")
+  email = request.json.get("email")
   
   # UPDATE ANY OF THE INFORMATION THAT MAY HAVE CHANGED IN DATA BELOW
-  contact.first_name = data.get("first_name", contact.first_name)
-  contact.last_name = data.get("last_name", contact.last_name)
-  contact.email = data.get("email", contact.email)
+  # contact.first_name = data.get("first_name", contact.first_name)
+  # contact.last_name = data.get("last_name", contact.last_name)
+  # contact.email = data.get("email", contact.email)
+  contact.first_name = first_name
+  contact.last_name = last_name
+  contact.email = email
   
   # COMMIT CHANGES TO DATABASE
-  db.session.commit()
-  return jsonify({"message": "Contact updated successfully"}), 201
+  # db.session.commit()
+  # return jsonify({"message": "Contact updated successfully"}), 201
+  try:
+      db.session.commit()
+  except Exception as e:
+      return jsonify({"message": str(e)}), 400
+  
+  return jsonify({"message": "Contact updated successfully!", "contact": contact.to_json()}), 200
 
 
 # DELETE METHOD

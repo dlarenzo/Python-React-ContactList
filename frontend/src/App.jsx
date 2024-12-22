@@ -8,6 +8,12 @@ function App() {
   //  SET STATE FOR CONTACTS
   const [contacts, setContacts] = useState([]);
 
+  // MODAL STATE
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // CURRENT CONTACT STATE
+  const [currentContact, setCurrentContact] = useState({});
+
   // USE EFFECT
   useEffect(() => {
     fetchContacts();
@@ -36,10 +42,61 @@ function App() {
     setContacts((prevContacts) => [...prevContacts, newContact]);
   };
 
+  // UPDATE CONTACT
+  const updateContact = (updatedContact) => {
+    setContacts((prevContacts) =>
+      prevContacts.map((contact) =>
+        contact.id === updatedContact.id ? updatedContact : contact
+      )
+    );
+  };
+
+  // MODAL FUNCTIONS
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setCurrentContact({});
+  };
+
+  const openCreateModal = () => {
+    if (!isModalOpen) {
+      setIsModalOpen(true);
+    }
+  };
+
+  const openEditModal = (contact) => {
+    if (isModalOpen) return;
+    setCurrentContact(contact);
+    setIsModalOpen(true);
+  };
+
+  const onUpdate = () => {
+    closeModal();
+    fetchContacts();
+  };
+
   return (
     <>
-      <ContactList contacts={contacts} />
-      <ContactForm addContact={addContact} />
+      <ContactList
+        contacts={contacts}
+        updateContact={openEditModal}
+        updateCallback={onUpdate}
+      />
+      <button onClick={openCreateModal}>Create New Contact</button>
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={closeModal}>
+              &times;
+            </span>
+            <ContactForm
+              addContact={addContact}
+              existingContact={currentContact}
+              updateCallback={(updateContact, onUpdate)}
+              closeModal={closeModal}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }
